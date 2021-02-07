@@ -65,3 +65,7 @@ while not light_on:
                     print(f"{datetime.datetime.now()}: Motion detected")
                     switches.switch_on(device)
                     light_on = True
+
+    else:
+        # If it's before sunset we only need to check every minute
+        time.sleep(60)

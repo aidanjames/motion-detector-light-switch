@@ -14,13 +14,14 @@ light_on = False
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-a", "--min-area", type=int, default=500, help="minimum area size")
+ap.add_argument("-a", "--min-area", type=int, default=1, help="minimum area size")
 args = vars(ap.parse_args())
 
 # Start capturing video from the webcam and give enough time to get out of the room so that the base
 # picture is of an empty room.
 vs = VideoStream(src=0).start()
 time.sleep(10.0)
+print("We'll get the first frame now")
 
 # initialize the first frame in the video stream
 firstFrame = None
@@ -57,8 +58,13 @@ while True:
     for contour in contours:
         # if the contour is too small, ignore it
         if cv2.contourArea(contour) < args["min_area"]:
+            print("Contour not significant enough.")
             continue
 
+        if past_sunset():
+            print("It's past sunset")
+        else:
+            print("We have detected motion but it's not past sunset??")
         if not light_on and past_sunset():
             print(f"{datetime.datetime.now()}: Motion detected")
             switches.switch_on(device)

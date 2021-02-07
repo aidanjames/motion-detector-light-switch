@@ -10,7 +10,14 @@ def past_sunset():
     s = sun(CITY.observer, date=now)
     sunset = s["sunset"]
 
-    if sunset.hour > now.hour and sunset.minute > now.minute and now.second > sunset.second:
+    # Convert sunset to datetime so it is comparable to now
+    sunset = datetime.datetime(day=sunset.day,
+                               month=sunset.month,
+                               year=sunset.year,
+                               hour=sunset.hour,
+                               minute=sunset.minute,
+                               second=sunset.second)
+    if sunset < now:
         return True
     else:
         return False

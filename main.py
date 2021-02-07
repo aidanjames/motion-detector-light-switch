@@ -1,7 +1,6 @@
 from switch_manager import SwitchManager
 import time
 from imutils.video import VideoStream
-import argparse
 import datetime
 import imutils
 import cv2
@@ -12,7 +11,7 @@ light_on = False
 
 while not light_on:
 
-    # Only start recording if it's already past sunset
+    # Only start recording if it's already past sunset (note this is LONDON sunset)
     if past_sunset():
 
         # Initialise light manager
@@ -58,7 +57,7 @@ while not light_on:
 
             # loop over the contours
             for contour in contours:
-                # if the contour is too small, ignore it
+                # if the contour is too small, ignore it (can tweak this value)
                 if cv2.contourArea(contour) < 100:
                     continue
 

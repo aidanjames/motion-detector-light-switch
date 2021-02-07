@@ -19,11 +19,6 @@ while not light_on:
         switches = SwitchManager()
         device = switches.find_devices()[0].get_alias()
 
-        # construct the argument parser and parse the arguments
-        ap = argparse.ArgumentParser()
-        ap.add_argument("-a", "--min-area", type=int, default=1, help="minimum area size")
-        args = vars(ap.parse_args())
-
         # Start capturing video from the webcam and give enough time to get out of the room so that the base
         # picture is of an empty room.
         vs = VideoStream(src=0).start()
@@ -64,7 +59,7 @@ while not light_on:
             # loop over the contours
             for contour in contours:
                 # if the contour is too small, ignore it
-                if cv2.contourArea(contour) < args["min_area"]:
+                if cv2.contourArea(contour) < 100:
                     continue
 
                 if not light_on:

@@ -6,6 +6,9 @@ import imutils
 import cv2
 from sunset import past_sunset
 
+time_delay_between_reference_refresh = 60.0
+next_refresh_due = time.time() + time_delay_between_reference_refresh
+
 
 light_on = False
 
@@ -41,9 +44,10 @@ while not light_on:
             gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
             # if the first frame is None, initialize it
-            if firstFrame is None:
+            if firstFrame is None or time.time() > next_refresh_due:
                 print(f"{datetime.datetime.now()}: Storing reference frame.")
                 firstFrame = gray
+                next_refresh_due = time.time() + time_delay_between_reference_refresh
                 continue
 
             # compute the absolute difference between the current frame and first frame
@@ -58,7 +62,7 @@ while not light_on:
             # loop over the contours
             for contour in contours:
                 # if the contour is too small, ignore it (can tweak this value)
-                if cv2.contourArea(contour) < 100:
+                if cv2.contourArea(contour) < 50:
                     continue
 
                 if not light_on:
@@ -68,4 +72,5 @@ while not light_on:
 
     else:
         # If it's before sunset we only need to check every minute
+        print("not yet past sunset. check again in one minute")
         time.sleep(60)

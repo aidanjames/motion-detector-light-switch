@@ -11,11 +11,12 @@ next_refresh_due = time.time() + time_delay_between_reference_refresh
 
 
 light_on = False
+active = True
 
-while not light_on:
+while active:
 
     # Only start recording if it's already past sunset (note this is LONDON sunset)
-    if past_sunset():
+    while past_sunset() and active:
 
         # Initialise light manager
         switches = SwitchManager()
@@ -36,6 +37,8 @@ while not light_on:
 
             # if the frame could not be grabbed, something's not right.
             if frame is None:
+                print("Couldn't get frame")
+                active = False
                 break
 
             # resize the frame, convert it to grayscale, and blur it
@@ -62,7 +65,7 @@ while not light_on:
             # loop over the contours
             for contour in contours:
                 # if the contour is too small, ignore it (can tweak this value)
-                if cv2.contourArea(contour) < 50:
+                if cv2.contourArea(contour) < 25:
                     continue
 
                 if not light_on:
@@ -70,7 +73,7 @@ while not light_on:
                     switches.switch_on(device)
                     light_on = True
 
-    else:
+    if active:
         # If it's before sunset we only need to check every minute
         print("not yet past sunset. check again in one minute")
         time.sleep(60)
